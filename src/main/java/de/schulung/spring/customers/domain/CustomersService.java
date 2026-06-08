@@ -40,7 +40,7 @@ public class CustomersService {
     return sink.existsById(uuid);
   }
 
-  public void replaceCustomer(Customer customer) {
+  public void replaceCustomer(@NotNull @Valid Customer customer) {
     sink.save(customer);
   }
 

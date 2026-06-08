@@ -476,5 +476,93 @@ public class CustomersApiTests {
       .andExpect(jsonPath("$.state").value("locked"));
   }
 
+  @Test
+  void shouldNotReplaceInvalidCustomer() throws Exception {
+    // setup: create customer and get uuid
+    var responseBody = mockMvc.perform(
+        post("/customers")
+          .contentType(MediaType.APPLICATION_JSON)
+          .content("""
+              {
+                "name": "Tom Mayer",
+                "birthdate": "2005-05-12",
+                "state": "active"
+              }
+            """)
+          .accept(MediaType.APPLICATION_JSON)
+      )
+      .andExpect(status().isCreated())
+      .andReturn()
+      .getResponse()
+      .getContentAsString();
+    final var uuid = JsonPath.read(responseBody, "$.uuid");
+
+    // Test
+    mockMvc.perform(
+        put("/customers/{uuid}", uuid)
+          .contentType(MediaType.APPLICATION_JSON)
+          .content("""
+              {
+                "birthdate": "2006-05-12",
+                "state": "locked"
+              }
+            """)
+      )
+      .andExpect(status().isBadRequest());
+
+    // Assertion: Original resource still exists
+    mockMvc.perform(
+        get("/customers/{uuid}", uuid)
+          .accept(MediaType.APPLICATION_JSON)
+      )
+      .andExpect(status().isOk())
+      .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+      .andExpect(jsonPath("$.name").value("Tom Mayer"))
+      .andExpect(jsonPath("$.birthdate").value("2005-05-12"))
+      .andExpect(jsonPath("$.state").value("active"));
+
+  }
+
+  @Test
+  void shouldNotReplaceMissingCustomer() throws Exception {
+    // setup: create customer, get uuid and delete it
+    var responseBody = mockMvc.perform(
+        post("/customers")
+          .contentType(MediaType.APPLICATION_JSON)
+          .content("""
+              {
+                "name": "Tom Mayer",
+                "birthdate": "2005-05-12",
+                "state": "active"
+              }
+            """)
+          .accept(MediaType.APPLICATION_JSON)
+      )
+      .andExpect(status().isCreated())
+      .andReturn()
+      .getResponse()
+      .getContentAsString();
+    final var uuid = JsonPath.read(responseBody, "$.uuid");
+
+    mockMvc.perform(
+        delete("/customers/{uuid}", uuid)
+      )
+      .andExpect(status().isNoContent());
+
+    // Test
+    mockMvc.perform(
+        put("/customers/{uuid}", uuid)
+          .contentType(MediaType.APPLICATION_JSON)
+          .content("""
+              {
+                "name": "Tom Smith",
+                "birthdate": "2006-05-12",
+                "state": "locked"
+              }
+            """)
+      )
+      .andExpect(status().isNotFound());
+
+  }
 
 }

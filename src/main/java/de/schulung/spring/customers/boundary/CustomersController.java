@@ -94,7 +94,10 @@ public class CustomersController {
     consumes = MediaType.APPLICATION_JSON_VALUE
   )
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void replaceCustomer(@PathVariable UUID uuid, @RequestBody CustomerDto customerDto) {
+  public void replaceCustomer(@PathVariable UUID uuid, @Valid @RequestBody CustomerDto customerDto) {
+    if (!customersService.existsCustomerByUuid(uuid)) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+    }
     customerDto.setUuid(uuid);
     customersService.replaceCustomer(mapper.map(customerDto));
   }
