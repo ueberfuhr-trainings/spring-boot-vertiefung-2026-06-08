@@ -40,6 +40,10 @@ public class CustomersService {
     return sink.existsById(uuid);
   }
 
+  public void replaceCustomer(@NotNull @Valid Customer customer) {
+    sink.save(customer);
+  }
+
   public void deleteCustomer(UUID uuid) {
     sink.deleteById(uuid);
   }
