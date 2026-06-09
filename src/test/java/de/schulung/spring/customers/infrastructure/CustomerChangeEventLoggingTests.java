@@ -82,7 +82,9 @@ class CustomerChangeEventsLoggingTests {
       )
       .andExpect(status().isBadRequest());
 
-    // TODO
+    // Negativ-Test: Innerhalb der kommenden 5 Sekunden darf keine Ausgabe erfolgt sein.
+    Thread.sleep(5000);
+
     assertThat(output)
       .doesNotContainPattern("(?i).*Customer created.*");
 
