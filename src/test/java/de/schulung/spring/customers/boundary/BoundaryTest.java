@@ -41,7 +41,7 @@ import java.lang.annotation.Target;
 @ComponentScan(basePackageClasses = BoundaryTest.class)
 @TestContextDefinition
 @AutoConfigureMockMvc
-@AutoConfigureCors(allowedOrigins = "*.swagger.io")
+@AutoConfigureCors(allowedOrigins = {"*.swagger.io", "localhost:8080"})
 @MockitoBean(types = CustomersService.class)
 // Standard-Java-Annotations
 @Retention(RetentionPolicy.RUNTIME)

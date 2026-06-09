@@ -1,7 +1,6 @@
 package de.schulung.spring.customers.boundary;
 
 import jakarta.annotation.Nonnull;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,7 +30,7 @@ public class CorsConfiguration {
 
   @Bean
   WebMvcConfigurer corsConfigurer(
-    @Value("${application.cors.allowed-origins}") String origins
+    CorsConfigurationProperties corsConfigurationProperties
   ) {
     return new WebMvcConfigurer() {
       @Override
@@ -41,8 +40,14 @@ public class CorsConfiguration {
           .exposedHeaders(LOCATION, LINK)
           .allowedHeaders(ORIGIN, CONTENT_TYPE, ACCEPT, ACCEPT_LANGUAGE, IF_MATCH, IF_NONE_MATCH, AUTHORIZATION)
           .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS")
-          .allowedOriginPatterns(origins)
-          .allowCredentials(false);
+          .allowedOriginPatterns(
+            corsConfigurationProperties
+              .getAllowedOrigins()
+              .toArray(new String[0]))
+          .allowCredentials(
+            corsConfigurationProperties
+              .isAllowCredentials()
+          );
       }
     };
   }
