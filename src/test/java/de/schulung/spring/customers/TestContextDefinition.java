@@ -1,5 +1,7 @@
 package de.schulung.spring.customers;
 
+import de.schulung.spring.customers.testing.TableChangesConfiguration;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.lang.annotation.ElementType;
@@ -26,5 +28,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.ANNOTATION_TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @ActiveProfiles("test")
+@Import(TableChangesConfiguration.class)
 public @interface TestContextDefinition {
 }

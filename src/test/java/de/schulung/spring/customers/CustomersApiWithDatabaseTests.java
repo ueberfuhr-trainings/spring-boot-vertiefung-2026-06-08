@@ -1,12 +1,11 @@
 package de.schulung.spring.customers;
 
 import com.jayway.jsonpath.JsonPath;
-import org.assertj.db.type.AssertDbConnectionFactory;
+import de.schulung.spring.customers.testing.TableChanges;
 import org.assertj.db.type.Changes;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
@@ -23,23 +22,13 @@ public class CustomersApiWithDatabaseTests {
   @Autowired
   MockMvc mockMvc;
 
-  // TODO manage externally
   @Autowired
-  private JdbcTemplate jdbcTemplate;
-
-  private Changes customersTableChanges() {
-    return AssertDbConnectionFactory
-      .of(jdbcTemplate.getDataSource())
-      .create()
-      .changes()
-      .table("customers")
-      .build();
-  }
+  @TableChanges("customers")
+  private Changes changes;
 
   @Test
   void shouldCreateCustomerInDatabase() throws Exception {
 
-    final var changes = customersTableChanges();
     changes.setStartPointNow();
 
     // Create the customer
@@ -75,4 +64,5 @@ public class CustomersApiWithDatabaseTests {
       .value("state").isEqualTo("active");
 
   }
+
 }
