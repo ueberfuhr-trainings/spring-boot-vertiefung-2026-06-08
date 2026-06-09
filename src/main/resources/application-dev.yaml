@@ -13,4 +13,7 @@ spring:
 application:
   cors:
     enabled: true
-    allowed-origins: '*.swagger.io'
+    allowed-origins:
+      - '*.swagger.io'
+      - 'localhost:8080'
+    allow-credentials: false
