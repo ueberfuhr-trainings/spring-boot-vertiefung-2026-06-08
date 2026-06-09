@@ -2,6 +2,7 @@ package de.schulung.spring.customers.domain;
 
 import de.schulung.spring.customers.shared.validation.Adult;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +13,8 @@ import java.util.UUID;
 @Setter
 public class Customer {
 
+  @NotNull(groups = CustomerValidationGroups.Update.class)
+  @Null(groups = CustomerValidationGroups.Create.class)
   private UUID uuid;
   @NotNull
   private String name;

@@ -7,45 +7,68 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
-import java.time.Month;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DomainTest
-public class CustomersServiceTests {
+class CustomersServiceTests {
 
   @Autowired
   CustomersService customersService;
 
-  public static Stream<Arguments> provideInvalidCustomers() {
+  private static Customer createValidCustomer() {
+    return new Customer()
+      .setName("Tom Mayer")
+      .setBirthdate(LocalDate.now().minusYears(18))
+      .setState(CustomerState.ACTIVE);
+  }
+
+  private static Stream<Customer> provideInvalidCustomersForAllModifications(boolean withUuid) {
     return Stream.of(
-      Arguments.of((Customer) null),
-      Arguments.of(new Customer()),
-      Arguments.of(
-        new Customer()
-          .setBirthdate(LocalDate.of(2005, Month.MAY, 5))
-          .setState(CustomerState.ACTIVE)
-          .setName(null)
-      ),
-      Arguments.of(
-        new Customer()
-          .setName("Tom Mayer")
-          .setState(CustomerState.ACTIVE)
+        null,
+        createValidCustomer()
+          .setName(null),
+        createValidCustomer()
+          .setBirthdate(null),
+        createValidCustomer()
           .setBirthdate(LocalDate.now().minusYears(18).plusDays(1))
       )
-    );
+      .map(c -> c == null || !withUuid ? c : c.setUuid(UUID.randomUUID()));
+  }
+
+  public static Stream<Arguments> provideInvalidCustomersForCreation() {
+    return Stream.concat(
+      provideInvalidCustomersForAllModifications(false),
+      Stream.of(
+        createValidCustomer()
+          .setUuid(UUID.randomUUID())
+      )
+
+    ).map(Arguments::of);
   }
 
   @ParameterizedTest
-  @MethodSource("provideInvalidCustomers")
+  @MethodSource("provideInvalidCustomersForCreation")
   void shouldValidateCustomerOnCreate(Customer customer) {
     assertThatThrownBy(() -> customersService.createCustomer(customer))
       .isInstanceOf(ValidationException.class);
   }
 
+  public static Stream<Arguments> provideInvalidCustomersForReplacement() {
+    return Stream.concat(
+      provideInvalidCustomersForAllModifications(true),
+      Stream.of(
+        createValidCustomer()
+          .setUuid(null)
+      )
+
+    ).map(Arguments::of);
+  }
+
   @ParameterizedTest
-  @MethodSource("provideInvalidCustomers")
+  @MethodSource("provideInvalidCustomersForReplacement")
   void shouldValidateCustomerOnReplace(Customer customer) {
     assertThatThrownBy(() -> customersService.replaceCustomer(customer))
       .isInstanceOf(ValidationException.class);
