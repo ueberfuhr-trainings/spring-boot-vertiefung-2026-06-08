@@ -10,7 +10,10 @@ import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.Duration;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -52,8 +55,14 @@ class CustomerChangeEventsLoggingTests {
       .asString()
       .isNotBlank();
 
-    assertThat(output)
-      .containsPattern(String.format("(?i).*Customer created.*%s.*", uuid));
+    await()
+      .pollDelay(Duration.ofMillis(50))
+      .pollInterval(Duration.ofMillis(50))
+      .atMost(Duration.ofSeconds(5))
+      .untilAsserted(
+        () -> assertThat(output)
+          .containsPattern(String.format("(?i).*Customer created.*%s.*", uuid))
+      );
 
   }
 
@@ -73,6 +82,7 @@ class CustomerChangeEventsLoggingTests {
       )
       .andExpect(status().isBadRequest());
 
+    // TODO
     assertThat(output)
       .doesNotContainPattern("(?i).*Customer created.*");
 
@@ -116,8 +126,15 @@ class CustomerChangeEventsLoggingTests {
       )
       .andExpect(status().is2xxSuccessful());
 
-    assertThat(output)
-      .containsPattern(String.format("(?i).*Customer updated.*%s.*", uuid));
+    await()
+      .pollDelay(Duration.ofMillis(50))
+      .pollInterval(Duration.ofMillis(50))
+      .atMost(Duration.ofSeconds(5))
+      .untilAsserted(
+        () -> assertThat(output)
+          .containsPattern(String.format("(?i).*Customer updated.*%s.*", uuid))
+      );
+
   }
 
   @Test
@@ -148,8 +165,15 @@ class CustomerChangeEventsLoggingTests {
       )
       .andExpect(status().is2xxSuccessful());
 
-    assertThat(output)
-      .containsPattern(String.format("(?i).*Customer deleted.*%s.*", uuid));
+    await()
+      .pollDelay(Duration.ofMillis(50))
+      .pollInterval(Duration.ofMillis(50))
+      .atMost(Duration.ofSeconds(5))
+      .untilAsserted(
+        () -> assertThat(output)
+          .containsPattern(String.format("(?i).*Customer deleted.*%s.*", uuid))
+      );
+
   }
 
 }
