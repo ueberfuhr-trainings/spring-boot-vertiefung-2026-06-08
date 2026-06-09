@@ -40,8 +40,14 @@ public class CorsConfiguration {
           .exposedHeaders(LOCATION, LINK)
           .allowedHeaders(ORIGIN, CONTENT_TYPE, ACCEPT, ACCEPT_LANGUAGE, IF_MATCH, IF_NONE_MATCH, AUTHORIZATION)
           .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS")
-          .allowedOriginPatterns(corsConfigurationProperties.getAllowedOrigins())
-          .allowCredentials(corsConfigurationProperties.isAllowCredentials());
+          .allowedOriginPatterns(
+            corsConfigurationProperties
+              .getAllowedOrigins()
+              .toArray(new String[0]))
+          .allowCredentials(
+            corsConfigurationProperties
+              .isAllowCredentials()
+          );
       }
     };
   }
