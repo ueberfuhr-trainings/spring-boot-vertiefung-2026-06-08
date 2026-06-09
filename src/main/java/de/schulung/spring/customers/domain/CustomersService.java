@@ -2,6 +2,7 @@ package de.schulung.spring.customers.domain;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,7 @@ public class CustomersService {
       .findById(uuid);
   }
 
+  @Validated({CustomerValidationGroups.Create.class, Default.class})
   public void createCustomer(@NotNull @Valid Customer customer) {
     sink.save(customer);
     eventPublisher.publishEvent(new CustomerCreatedEvent(customer));
@@ -43,6 +45,7 @@ public class CustomersService {
     return sink.existsById(uuid);
   }
 
+  @Validated({CustomerValidationGroups.Update.class, Default.class})
   public void replaceCustomer(@NotNull @Valid Customer customer) {
     sink.save(customer);
     eventPublisher.publishEvent(new CustomerUpdatedEvent(customer));
