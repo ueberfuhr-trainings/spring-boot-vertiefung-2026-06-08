@@ -2,7 +2,6 @@ package de.schulung.spring.customers.boundary;
 
 import de.schulung.spring.customers.domain.CustomersService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,7 +33,7 @@ public class CustomersController {
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public Stream<CustomerDto> getCustomers(
     @RequestParam(value = "state", required = false)
-    @Pattern(regexp = "active|locked|disabled")
+    @CustomerStateValue
     String stateFilter
   ) {
     return

@@ -3,6 +3,8 @@ package de.schulung.spring.customers;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -10,6 +12,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
 
 import java.net.URI;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -73,7 +78,7 @@ public class CustomersApiTests {
           .content("""
             {
               "name": "Tom Mayer",
-              "birthdate": "2026-05-05",
+              "birthdate": "2006-05-05",
               "state": "active"
             }
             """)
@@ -82,7 +87,7 @@ public class CustomersApiTests {
       .andExpect(status().isCreated())
       .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
       .andExpect(jsonPath("$.name").value("Tom Mayer"))
-      .andExpect(jsonPath("$.birthdate").value("2026-05-05"))
+      .andExpect(jsonPath("$.birthdate").value("2006-05-05"))
       .andExpect(jsonPath("$.state").value("active"))
       .andExpect(jsonPath("$.uuid").isNotEmpty())
       // assert that Location header is set and contains an absolute URL
@@ -107,7 +112,7 @@ public class CustomersApiTests {
           .content("""
             {
               "name": "Tom Mayer",
-              "birthdate": "2026-05-05"
+              "birthdate": "2006-05-05"
             }
             """)
           .accept(MediaType.APPLICATION_JSON)
@@ -128,7 +133,7 @@ public class CustomersApiTests {
           .content("""
             {
               "name": "Tom Mayer",
-              "birthdate": "2026-05-05",
+              "birthdate": "2006-05-05",
               "state": "active"
             }
             """)
@@ -150,7 +155,7 @@ public class CustomersApiTests {
       .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
       .andExpect(jsonPath("$.uuid").value(uuid))
       .andExpect(jsonPath("$.name").value("Tom Mayer"))
-      .andExpect(jsonPath("$.birthdate").value("2026-05-05"))
+      .andExpect(jsonPath("$.birthdate").value("2006-05-05"))
       .andExpect(jsonPath("$.state").value("active"));
 
   }
@@ -165,7 +170,7 @@ public class CustomersApiTests {
           .content("""
             {
               "name": "Tom Mayer",
-              "birthdate": "2026-05-05",
+              "birthdate": "2006-05-05",
               "state": "active"
             }
             """)
@@ -186,7 +191,7 @@ public class CustomersApiTests {
       .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
       .andExpect(jsonPath("$.uuid").isNotEmpty())
       .andExpect(jsonPath("$.name").value("Tom Mayer"))
-      .andExpect(jsonPath("$.birthdate").value("2026-05-05"))
+      .andExpect(jsonPath("$.birthdate").value("2006-05-05"))
       .andExpect(jsonPath("$.state").value("active"));
 
   }
@@ -201,7 +206,7 @@ public class CustomersApiTests {
           .content("""
             {
               "name": "Tom Mayer",
-              "birthdate": "2026-05-05",
+              "birthdate": "2006-05-05",
               "state": "active"
             }
             """)
@@ -235,7 +240,7 @@ public class CustomersApiTests {
           .content("""
             {
               "name": "Tom Mayer",
-              "birthdate": "2026-05-05",
+              "birthdate": "2006-05-05",
               "state": "active"
             }
             """)
@@ -311,7 +316,7 @@ public class CustomersApiTests {
           .content("""
             {
               "name": "Tom Mayer",
-              "birthdate": "2026-05-05",
+              "birthdate": "2006-05-05",
               "state": "active"
             }
             """)
@@ -338,7 +343,30 @@ public class CustomersApiTests {
       .andExpect(status().isNotFound());
   }
 
+  public static Stream<Arguments> provideInvalidCustomerJsons() {
+    return Stream.of(
+      Arguments.of(
+        """
+          {
+            "name": "Tom Mayer",
+            "birthdate": "%s",
+            "state": "active"
+          }
+          """
+          .formatted(
+            LocalDate
+              .now()
+              .minusYears(18)
+              .plusDays(1)
+              .format(DateTimeFormatter.ISO_DATE)
+          )
+      )
+    );
+  }
+
+
   @ParameterizedTest
+  @MethodSource("provideInvalidCustomerJsons")
   @ValueSource(strings = {
     // missing comma
     """
