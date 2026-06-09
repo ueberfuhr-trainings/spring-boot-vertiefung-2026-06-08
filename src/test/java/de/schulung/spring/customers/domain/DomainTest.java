@@ -4,6 +4,7 @@ import de.schulung.spring.customers.TestContextDefinition;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.event.RecordApplicationEvents;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -18,6 +19,7 @@ import java.lang.annotation.Target;
 @TestContextDefinition
 @AutoConfigureTestDatabase // TODO: disable other layers
 @MockitoBean(types = CustomersSink.class)
+@RecordApplicationEvents
 // Standard-Java-Annotations
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
