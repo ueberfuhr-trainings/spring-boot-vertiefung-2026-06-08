@@ -5,11 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
 
@@ -24,10 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@ActiveProfiles("test")
-@AutoConfigureTestDatabase
+@CustomersApplicationTest
 public class CustomersApiTests {
 
   @Autowired
@@ -433,16 +426,16 @@ public class CustomersApiTests {
 
     // setup
     var responseBody = mockMvc.perform(
-      post("/customers")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content("""
-          {
-            "name": "Tom Mayer",
-            "birthdate": "2005-05-12",
-            "state": "active"
-          }
-          """)
-        .accept(MediaType.APPLICATION_JSON)
+        post("/customers")
+          .contentType(MediaType.APPLICATION_JSON)
+          .content("""
+            {
+              "name": "Tom Mayer",
+              "birthdate": "2005-05-12",
+              "state": "active"
+            }
+            """)
+          .accept(MediaType.APPLICATION_JSON)
       )
       .andExpect(status().isCreated())
       .andReturn()
@@ -452,15 +445,15 @@ public class CustomersApiTests {
 
     // Test
     mockMvc.perform(
-      put("/customers/{uuid}", uuid)
-        .contentType(MediaType.APPLICATION_JSON)
-        .content("""
-          {
-            "name": "Tom Smith",
-            "birthdate": "2005-05-13",
-            "state": "locked"
-          }
-          """)
+        put("/customers/{uuid}", uuid)
+          .contentType(MediaType.APPLICATION_JSON)
+          .content("""
+            {
+              "name": "Tom Smith",
+              "birthdate": "2005-05-13",
+              "state": "locked"
+            }
+            """)
       )
       .andExpect(status().isNoContent());
 
