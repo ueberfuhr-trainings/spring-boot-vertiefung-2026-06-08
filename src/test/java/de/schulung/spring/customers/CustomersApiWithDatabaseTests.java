@@ -23,6 +23,7 @@ public class CustomersApiWithDatabaseTests {
   @Autowired
   MockMvc mockMvc;
 
+  // TODO manage externally
   @Autowired
   private JdbcTemplate jdbcTemplate;
 
