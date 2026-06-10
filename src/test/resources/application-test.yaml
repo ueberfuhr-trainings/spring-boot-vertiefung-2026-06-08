@@ -9,3 +9,9 @@ logging:
         test:
           context:
             cache: DEBUG
+    de:
+      schulung:
+        spring:
+          customers:
+            shared:
+              interceptors: DEBUG
