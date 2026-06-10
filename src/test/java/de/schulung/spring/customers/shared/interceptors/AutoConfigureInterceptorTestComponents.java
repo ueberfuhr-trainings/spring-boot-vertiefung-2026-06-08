@@ -13,6 +13,7 @@ import java.lang.annotation.Target;
 @Documented
 @Import({
   LogPerformanceTestService.class,
+  LogPerformanceTestAtClassLevelService.class,
 })
 public @interface AutoConfigureInterceptorTestComponents {
 }

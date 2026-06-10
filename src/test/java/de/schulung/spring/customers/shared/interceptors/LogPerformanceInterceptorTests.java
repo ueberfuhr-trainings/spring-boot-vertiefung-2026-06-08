@@ -26,6 +26,8 @@ class LogPerformanceInterceptorTests {
 
   @Autowired
   LogPerformanceTestService logPerformanceTestService;
+  @Autowired
+  LogPerformanceTestAtClassLevelService logPerformanceTestAtClassLevelService;
 
   @Test
   void shouldInvokeMethodPerformanceLogging(CapturedOutput output) {
@@ -39,6 +41,13 @@ class LogPerformanceInterceptorTests {
     logPerformanceTestService.doSthDebug();
     assertThat(output)
       .containsPattern(String.format("(?i).*DEBUG.*%s took \\d+ ms.*", "doSthDebug"));
+  }
+
+  @Test
+  void shouldInvokeMethodPerformanceLoggingWithClassLevelAnnotation(CapturedOutput output) {
+    logPerformanceTestAtClassLevelService.doSth();
+    assertThat(output)
+      .containsPattern(String.format("(?i).*%s took \\d+ ms.*", "doSth"));
   }
 
 }
