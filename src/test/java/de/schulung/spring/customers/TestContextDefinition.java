@@ -1,5 +1,6 @@
 package de.schulung.spring.customers;
 
+import de.schulung.spring.customers.shared.AutoConfigureSharedComponents;
 import de.schulung.spring.customers.shared.interceptors.AutoConfigureInterceptorTestComponents;
 import de.schulung.spring.customers.testing.TableChangesConfiguration;
 import org.springframework.context.annotation.Import;
@@ -29,6 +30,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.ANNOTATION_TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @ActiveProfiles("test")
+@AutoConfigureSharedComponents
 @AutoConfigureInterceptorTestComponents
 @Import(TableChangesConfiguration.class)
 public @interface TestContextDefinition {
