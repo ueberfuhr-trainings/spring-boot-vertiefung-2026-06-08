@@ -10,6 +10,8 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+  liquibase:
+    enabled: ${LIQUIBASE_ENABLED:false}
 application:
   cors:
     enabled: ${CORS_ENABLED:false}
