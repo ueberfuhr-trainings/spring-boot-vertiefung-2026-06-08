@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spring Boot Vertiefung Wissens-Check - ATVANTAGE Academy</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #111111;
+      color: #eeeeee;
+    }
+
+    .academy-header {
+      background-color: #1e1e1e;
+      border-bottom: 3px solid #ff5401;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    }
+
+    .quiz-card {
+      background-color: #1e1e1e;
+      border: 1px solid #333333;
+      transition: all 0.3s ease;
+    }
+
+    .option-btn {
+      background-color: #2a2a2a;
+      border: 2px solid #333333;
+      transition: all 0.2s ease;
+      text-align: left;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      background-color: #333333;
+      border-color: #444444;
+    }
+
+    .option-btn.correct {
+      background-color: #14532d;
+      border-color: #22c55e;
+    }
+
+    .option-btn.wrong {
+      background-color: #431407;
+      border-color: #ff5401;
+    }
+
+    .code-block {
+      background-color: #000000;
+      font-family: 'Courier New', Courier, monospace;
+      border: 1px solid #333333;
+    }
+
+    .email-hover-bridge::before {
+      content: '';
+      position: absolute;
+      top: -20px;
+      left: 0;
+      right: 0;
+      height: 20px;
+      background: transparent;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Academy Top Bar -->
+<nav class="academy-header sticky top-0 z-40 w-full px-6 h-16 flex items-center justify-between">
+  <div class="flex items-center gap-2">
+    <span class="text-xl font-black tracking-tighter text-[#ff5401]">ATVANTAGE</span>
+    <span class="text-xl font-light text-neutral-500">Academy</span>
+  </div>
+  <div class="flex items-center gap-4">
+    <div class="relative group">
+      <button id="email-btn" class="p-2 text-neutral-400 hover:text-[#ff5401] transition-colors"
+              title="E-Mail Kontakt">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+             stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+        </svg>
+      </button>
+      <div class="absolute right-0 top-10 hidden group-hover:flex items-center gap-3 bg-[#2a2a2a] border border-[#333333] p-2 px-3 rounded-lg shadow-2xl z-50 email-hover-bridge">
+        <a id="email-link-display" href="#"
+           class="text-sm font-medium text-slate-300 hover:text-[#ff5401] transition-colors underline decoration-dotted underline-offset-4 decoration-slate-600">academy@atvantage.com</a>
+        <button id="copy-email-sub-btn"
+                class="bg-[#ff5401] hover:bg-[#e64a00] p-1.5 rounded transition-colors text-[#111111]"
+                title="Kopieren">
+          <svg id="copy-icon" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+          </svg>
+          <svg id="check-icon" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 hidden" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="w-full min-h-screen flex items-center justify-center p-4 md:p-8">
+
+<div id="quiz-container" class="w-full max-w-2xl">
+  <!-- Header -->
+  <div class="mb-8 text-center">
+    <h1 class="text-4xl font-extrabold text-white mb-2 tracking-tight">Spring Boot Vertiefung <span class="text-[#ff5401]">Wissens-Check</span></h1>
+    <p class="text-neutral-500">Reflexion der Schulungsinhalte</p>
+    <div class="mt-4 flex justify-between items-center text-xs text-neutral-500 mb-1">
+      <span id="question-counter">Frage 1 von 15</span>
+      <span id="score-counter">Punkte: 0</span>
+    </div>
+    <div class="h-2 w-full bg-[#1e1e1e] rounded-full overflow-hidden border border-[#333333]">
+      <div id="progress-bar" class="h-full bg-[#ff5401] transition-all duration-500" style="width: 0%"></div>
+    </div>
+  </div>
+
+  <!-- Question Card -->
+  <div id="question-card" class="quiz-card p-6 rounded-2xl shadow-2xl">
+    <div id="question-content">
+    </div>
+
+    <div id="options-container" class="space-y-3 mt-6">
+    </div>
+
+    <div id="feedback" class="mt-6 p-4 rounded-lg hidden border-l-4">
+    </div>
+
+    <button id="next-btn"
+            class="mt-6 w-full py-3 bg-[#ff5401] hover:bg-[#e64a00] font-semibold rounded-xl transition-colors hidden text-white">
+      Nächste Frage
+    </button>
+  </div>
+
+  <!-- Result Screen -->
+  <div id="result-screen" class="quiz-card p-8 rounded-2xl shadow-2xl text-center hidden">
+    <h2 class="text-4xl font-extrabold text-white mb-4">Training <span class="text-[#ff5401]">beendet!</span></h2>
+    <p id="final-score" class="text-xl mb-6"></p>
+    <div id="score-interpretation" class="mb-8 text-neutral-400"></div>
+    <button onclick="location.reload()" class="px-8 py-3 bg-[#ff5401] hover:bg-[#e64a00] font-semibold rounded-xl text-white transition-colors">
+      Quiz neu starten
+    </button>
+  </div>
+</div>
+
+</div>
+
+<script>
+  function getAcademyEmail() {
+    const part1 = 'academy';
+    const part2 = 'atvantage.com';
+    return part1 + '@' + part2;
+  }
+
+  // E-Mail Anzeige initialisieren
+  const emailLink = document.getElementById('email-link-display');
+  emailLink.innerText = getAcademyEmail();
+
+  // E-Mail Logik (Header Button)
+  document.getElementById('email-btn').onclick = function () {
+    window.location.href = 'mailto:' + getAcademyEmail();
+  };
+
+  // E-Mail Logik (Popup Link)
+  emailLink.onclick = function (e) {
+    e.preventDefault();
+    window.location.href = 'mailto:' + getAcademyEmail();
+  };
+  emailLink.onmouseenter = function () {
+    this.href = 'mailto:' + getAcademyEmail();
+  };
+
+  // E-Mail Kopieren
+  document.getElementById('copy-email-sub-btn').onclick = function () {
+    const email = getAcademyEmail();
+    const temp = document.createElement('textarea');
+    temp.value = email;
+    document.body.appendChild(temp);
+    temp.select();
+    try {
+      document.execCommand('copy');
+      const copyIcon = document.getElementById('copy-icon');
+      const checkIcon = document.getElementById('check-icon');
+      copyIcon.classList.add('hidden');
+      checkIcon.classList.remove('hidden');
+      setTimeout(() => {
+        copyIcon.classList.remove('hidden');
+        checkIcon.classList.add('hidden');
+      }, 2000);
+    } catch (err) {
+      console.error('Kopieren fehlgeschlagen');
+    }
+    document.body.removeChild(temp);
+  };
+
+  const questions = [
+    {
+      description: "Der Application Context ist das Herzstück einer Spring-Boot-Anwendung.",
+      question: "Was ist der Application Context in Spring Boot?",
+      options: [
+        {
+          text: "Ein Container, der alle Beans verwaltet, ihre Abhängigkeiten auflöst und den Lebenszyklus steuert — quasi die 'Schaltzentrale' der Anwendung.",
+          correct: true,
+          feedback: "Richtig! Der Application Context ist eine Implementierung des IoC-Containers. Er scannt Klassen, erstellt Beans, injiziert Abhängigkeiten und stellt Infrastruktur wie Event-Publishing bereit."
+        },
+        {
+          text: "Eine Konfigurationsdatei (application.yaml), die alle Einstellungen der Anwendung enthält.",
+          correct: false,
+          feedback: "Die application.yaml enthält Konfigurationswerte, ist aber nicht der Application Context selbst. Der Context ist ein Laufzeit-Container für Beans."
+        },
+        {
+          text: "Ein spezieller Thread, der die main()-Methode ausführt.",
+          correct: false,
+          feedback: "Der Application Context ist kein Thread, sondern ein Objekt, das Beans verwaltet und bereitstellt."
+        },
+        {
+          text: "Die REST-API-Schicht, die HTTP-Anfragen entgegennimmt.",
+          correct: false,
+          feedback: "Die REST-API ist nur ein Teil der Anwendung. Der Application Context umfasst alle Schichten."
+        }
+      ]
+    },
+    {
+      description: "In unserem Projekt gibt es verschiedene Test-Annotationen: @SpringBootTest, @WebMvcTest und die selbst geschriebene @DomainTest.",
+      question: "Warum verwendet man unterschiedliche Test-Slices statt immer @SpringBootTest?",
+      options: [
+        {
+          text: "Jeder Slice lädt nur die Beans der jeweiligen Schicht. Das reduziert die Startzeit des Application Context erheblich und macht Tests schneller.",
+          correct: true,
+          feedback: "Richtig! @WebMvcTest lädt nur Web-Beans, @DomainTest nur Domain-Beans mit Validation. Weniger Beans = schnellerer Context-Start = schnellere Tests."
+        },
+        {
+          text: "Es gibt keinen Performance-Unterschied, es ist nur eine stilistische Konvention.",
+          correct: false,
+          feedback: "Doch! Ein voller @SpringBootTest-Context mit Datenbank dauert deutlich länger als ein minimaler @DomainTest-Context."
+        },
+        {
+          text: "Verschiedene Slices sind nötig, weil Spring Boot pro Testklasse immer einen neuen Context erstellt.",
+          correct: false,
+          feedback: "Spring Boot cached Application Contexts über Testklassen hinweg. Aber verschiedene Konfigurationen erzeugen trotzdem unterschiedliche Contexts."
+        },
+        {
+          text: "Man braucht verschiedene Annotationen, weil @SpringBootTest in neueren Spring-Boot-Versionen veraltet ist.",
+          correct: false,
+          feedback: "@SpringBootTest ist nicht veraltet. Es gibt aber oft schlankere Alternativen, die den Test beschleunigen."
+        }
+      ]
+    },
+    {
+      description: "Unser @DomainTest lädt nur ValidationAutoConfiguration und einen In-Memory-CustomersSink.",
+      question: "Welchen Vorteil hat es, für Domain-Tests keinen vollständigen Application Context zu starten?",
+      code: "@ImportAutoConfiguration(classes = {\n  ValidationAutoConfiguration.class\n})\n@Import(CustomersSinkInMemoryConfiguration.class)",
+      options: [
+        {
+          text: "Kein JPA, kein Web-Layer, keine Datenbank — nur Validierung und Geschäftslogik. Der Context startet in Millisekunden statt Sekunden.",
+          correct: true,
+          feedback: "Richtig! Durch gezieltes Laden nur der benötigten Auto-Konfigurationen entfällt der teure Datenbank- und Web-Stack. Die In-Memory-Implementierung ersetzt JPA vollständig."
+        },
+        {
+          text: "Es gibt keinen Vorteil, man spart höchstens ein paar Zeilen Code.",
+          correct: false,
+          feedback: "Der Vorteil ist massiv: Domain-Tests laufen um ein Vielfaches schneller, weil keine Datenbank und kein Web-Server gestartet werden."
+        },
+        {
+          text: "Der Vorteil ist nur, dass man keine Datenbank-Verbindung konfigurieren muss.",
+          correct: false,
+          feedback: "Das ist ein Nebeneffekt, aber der Hauptvorteil ist die drastisch reduzierte Startzeit des Test-Contexts."
+        },
+        {
+          text: "Man testet so die Validierung isoliert, aber die Geschäftslogik wird nicht getestet.",
+          correct: false,
+          feedback: "Auch die Geschäftslogik im CustomersService wird getestet — nur eben ohne echte Datenbank."
+        }
+      ]
+    },
+    {
+      description: "Im Projekt gibt es die eigene Annotation @Adult, die auf einem Geburtsdatum prüft, ob die Person volljährig ist.",
+      question: "Was braucht man, um eine eigene Bean-Validation-Annotation in Java zu schreiben?",
+      code: "@Constraint(validatedBy = AdultValidator.class)\npublic @interface Adult {\n  String message() default \"must be an adult\";\n  Class<?>[] groups() default {};\n  Class<? extends Payload>[] payload() default {};\n  long value() default 18;\n}",
+      options: [
+        {
+          text: "Eine Annotation mit @Constraint, die Pflichtfelder message, groups und payload definiert, sowie eine Validator-Klasse, die ConstraintValidator implementiert.",
+          correct: true,
+          feedback: "Richtig! Die drei Felder (message, groups, payload) sind Pflicht laut Bean Validation Spec. Der Validator implementiert die eigentliche Prüflogik."
+        },
+        {
+          text: "Nur die Annotation reicht — Spring Boot generiert die Validierungslogik automatisch.",
+          correct: false,
+          feedback: "Nein, man braucht immer eine Validator-Klasse (oder eine Komposition bestehender Constraints), die die Logik implementiert."
+        },
+        {
+          text: "Man muss eine abstrakte Klasse statt einer Annotation verwenden.",
+          correct: false,
+          feedback: "Bean Validation basiert auf Annotationen (@interface), nicht auf abstrakten Klassen."
+        },
+        {
+          text: "Man registriert die Validierung in der application.yaml.",
+          correct: false,
+          feedback: "Bean-Validation-Constraints werden über Annotationen und @Constraint registriert, nicht über YAML."
+        }
+      ]
+    },
+    {
+      description: "Im Projekt wird @CustomerStateValue als Komposition existierender Constraints verwendet — ohne eigenen Validator.",
+      question: "Wie funktioniert eine Bean-Validation-Annotation ohne eigene Validator-Klasse?",
+      code: "@Constraint(validatedBy = {})\n@Pattern(regexp = \"active|locked|disabled\")\n@ReportAsSingleViolation\npublic @interface CustomerStateValue { ... }",
+      options: [
+        {
+          text: "Durch Komposition: Die Annotation ist selbst mit bestehenden Constraints annotiert (hier @Pattern). @ReportAsSingleViolation fasst die Fehlermeldungen zusammen.",
+          correct: true,
+          feedback: "Richtig! validatedBy = {} bedeutet: kein eigener Validator. Stattdessen delegiert @CustomerStateValue an @Pattern. Das ist eine elegante Art, wiederverwendbare Constraints zu bauen."
+        },
+        {
+          text: "Das funktioniert nicht — ohne Validator wird die Annotation ignoriert.",
+          correct: false,
+          feedback: "Doch! Wenn die Annotation selbst mit anderen Constraints annotiert ist, werden diese ausgewertet."
+        },
+        {
+          text: "Spring Boot erkennt automatisch reguläre Ausdrücke in Annotation-Feldern.",
+          correct: false,
+          feedback: "Nein, die Delegation funktioniert über die @Pattern-Annotation auf der @CustomerStateValue-Annotation selbst."
+        },
+        {
+          text: "Die Validierung passiert erst zur Laufzeit durch Reflection, deshalb braucht man keinen Validator.",
+          correct: false,
+          feedback: "Das Prinzip ist Constraint-Komposition, nicht Reflection. Bean Validation wertet die Meta-Annotationen aus."
+        }
+      ]
+    },
+    {
+      description: "Der CustomersService in unserem Projekt publiziert Spring Application Events wie CustomerCreatedEvent.",
+      question: "Wozu verwendet man Spring Application Events?",
+      code: "eventPublisher.publishEvent(\n  new CustomerCreatedEvent(customer)\n);",
+      options: [
+        {
+          text: "Um Schichten zu entkoppeln: Der Service meldet 'es ist etwas passiert', ohne zu wissen, wer darauf reagiert — z.B. ein Logger, ein Notification-Service oder ein Audit-Trail.",
+          correct: true,
+          feedback: "Richtig! Events entkoppeln Publisher und Listener. Der CustomersService weiß nichts vom CustomerEventsLogger — und trotzdem wird geloggt. Neue Listener können ohne Änderung am Service hinzugefügt werden."
+        },
+        {
+          text: "Um Daten an die Datenbank zu senden, weil JPA nur über Events funktioniert.",
+          correct: false,
+          feedback: "JPA funktioniert über Repositories, nicht über Application Events. Events dienen der losen Kopplung zwischen Komponenten."
+        },
+        {
+          text: "Um HTTP-Responses an den Client zu schicken.",
+          correct: false,
+          feedback: "HTTP-Responses werden vom Controller erzeugt. Application Events sind ein internes Kommunikationsmuster."
+        },
+        {
+          text: "Sie sind Pflicht in Spring Boot — ohne Events funktioniert Dependency Injection nicht.",
+          correct: false,
+          feedback: "Events sind optional. Dependency Injection funktioniert unabhängig davon über den Application Context."
+        }
+      ]
+    },
+    {
+      description: "Im Projekt sind die Event-Listener mit @Async annotiert. Die Application-Klasse trägt @EnableAsync.",
+      question: "Was bewirkt @Async auf einem @EventListener?",
+      code: "@Async\n@EventListener\npublic void onCustomerCreated(\n  CustomerCreatedEvent event\n) {\n  log.info(\"Customer created: {}\",\n    event.customer().getUuid());\n}",
+      options: [
+        {
+          text: "Der Listener wird in einem separaten Thread ausgeführt, sodass der Publisher (z.B. createCustomer) nicht auf das Logging warten muss.",
+          correct: true,
+          feedback: "Richtig! Ohne @Async blockiert der Event-Listener den aufrufenden Thread. Mit @Async läuft er asynchron — der Service kehrt sofort zurück, das Logging passiert parallel."
+        },
+        {
+          text: "@Async bedeutet, dass der Listener erst beim nächsten Serverstart ausgeführt wird.",
+          correct: false,
+          feedback: "Nein, @Async bedeutet asynchrone Ausführung in einem anderen Thread — nicht verzögert bis zum Neustart."
+        },
+        {
+          text: "Es bewirkt, dass Events in einer Warteschlange gespeichert werden und nie verloren gehen.",
+          correct: false,
+          feedback: "Spring Application Events sind In-Memory und nicht persistent. @Async steuert nur die Thread-Ausführung."
+        },
+        {
+          text: "@Async hat keine Auswirkung auf Event-Listener, nur auf REST-Controller.",
+          correct: false,
+          feedback: "@Async funktioniert auf jeder Spring-Bean-Methode — auch auf Event-Listenern."
+        }
+      ]
+    },
+    {
+      description: "Im Projekt wird CORS-Konfiguration über @ConfigurationProperties gebunden.",
+      question: "Was ist der Vorteil von @ConfigurationProperties gegenüber vielen einzelnen @Value-Annotationen?",
+      code: "@ConfigurationProperties(prefix = \"application.cors\")\npublic class CorsConfigurationProperties {\n  private boolean enabled = false;\n  private List<@NotBlank String> allowedOrigins\n    = List.of(\"*\");\n  private boolean allowCredentials = false;\n}",
+      options: [
+        {
+          text: "Man bekommt ein typsicheres Java-Objekt, das die YAML-Struktur abbildet — inklusive Validierung mit Bean Validation, Default-Werten und IDE-Unterstützung.",
+          correct: true,
+          feedback: "Richtig! @ConfigurationProperties bindet einen ganzen YAML-Prefix auf ein POJO. Man kann @Validated nutzen, Listen und verschachtelte Objekte abbilden — viel strukturierter als einzelne @Value-Strings."
+        },
+        {
+          text: "@ConfigurationProperties ist nur ein Alias für @Value und bietet keine zusätzlichen Vorteile.",
+          correct: false,
+          feedback: "Nein, @ConfigurationProperties bietet typsichere Bindung, Validierung, Listen-Support und strukturierte Konfiguration — weit mehr als @Value."
+        },
+        {
+          text: "Der Vorteil ist, dass man keine application.yaml braucht — die Werte kommen aus der Annotation selbst.",
+          correct: false,
+          feedback: "Die Werte kommen weiterhin aus der YAML (oder Umgebungsvariablen). Die Annotation bindet sie nur an ein Java-Objekt."
+        },
+        {
+          text: "@ConfigurationProperties lädt die Konfiguration schneller als @Value.",
+          correct: false,
+          feedback: "Der Performance-Unterschied ist vernachlässigbar. Der Vorteil liegt in Typsicherheit, Struktur und Validierung."
+        }
+      ]
+    },
+    {
+      description: "In der application.yaml werden Datenbank-Credentials über Platzhalter referenziert.",
+      question: "Warum verwendet man ${DB_URL}, ${DB_USERNAME} und ${DB_PASSWORD} statt die Werte direkt in die YAML zu schreiben?",
+      code: "spring:\n  datasource:\n    url: ${DB_URL}\n    username: ${DB_USERNAME}\n    password: ${DB_PASSWORD}",
+      options: [
+        {
+          text: "Das folgt dem 12-Factor-App-Prinzip: Konfiguration wird über Umgebungsvariablen injiziert, sodass derselbe Build in jeder Umgebung (Dev, Staging, Prod) laufen kann — ohne Secrets im Code.",
+          correct: true,
+          feedback: "Richtig! Factor III der 12-Factor-App: 'Store config in the environment'. So bleiben Secrets aus dem Git-Repository, und das Deployment-Artefakt ist umgebungsunabhängig."
+        },
+        {
+          text: "Weil Spring Boot keine fest codierten Werte in YAML unterstützt.",
+          correct: false,
+          feedback: "Spring Boot kann durchaus feste Werte lesen. Aber Secrets und umgebungsspezifische Werte sollten aus Sicherheitsgründen externalisiert werden."
+        },
+        {
+          text: "Damit die Anwendung schneller startet, weil Umgebungsvariablen schneller gelesen werden als YAML-Dateien.",
+          correct: false,
+          feedback: "Es geht nicht um Performance, sondern um Sicherheit und Portabilität zwischen Umgebungen."
+        },
+        {
+          text: "Das ist nur für Kubernetes relevant, lokal braucht man das nicht.",
+          correct: false,
+          feedback: "Das Prinzip gilt für jede Deployment-Umgebung. Lokal nutzt man z.B. das dev-Profil mit festen Werten, in Produktion Umgebungsvariablen."
+        }
+      ]
+    },
+    {
+      description: "Das Projekt nutzt Spring Profiles: application.yaml (Produktion), application-dev.yaml (Entwicklung), application-test.yaml (Tests).",
+      question: "Wie löst Spring Boot die Konfiguration auf, wenn z.B. das Profil 'dev' aktiv ist?",
+      options: [
+        {
+          text: "Spring Boot lädt zuerst application.yaml als Basis, dann überschreibt application-dev.yaml nur die dort definierten Werte — der Rest bleibt aus der Basis-YAML.",
+          correct: true,
+          feedback: "Richtig! Profile-spezifische YAMLs überschreiben gezielt einzelne Properties. So definiert application.yaml die Grundstruktur (z.B. ${DB_URL}), und application-dev.yaml ersetzt nur die Datenbank-URL durch H2."
+        },
+        {
+          text: "Nur application-dev.yaml wird geladen, application.yaml wird komplett ignoriert.",
+          correct: false,
+          feedback: "Nein, die Basis-YAML wird immer geladen. Die Profil-YAML ergänzt oder überschreibt einzelne Werte."
+        },
+        {
+          text: "Beide Dateien werden alphabetisch sortiert zusammengeführt.",
+          correct: false,
+          feedback: "Die Reihenfolge basiert auf Profil-Aktivierung, nicht auf Alphabetisierung."
+        },
+        {
+          text: "Man muss in application-dev.yaml alle Werte aus application.yaml wiederholen.",
+          correct: false,
+          feedback: "Nein, man definiert nur die Abweichungen. Alles andere wird aus der Basis-YAML übernommen."
+        }
+      ]
+    },
+    {
+      description: "Im Domain-Layer gibt es das Interface CustomersSink, das von der Persistence-Schicht implementiert wird.",
+      question: "Wozu dient das Interface CustomersSink in der Architektur?",
+      code: "// Domain-Schicht definiert das Interface\npublic interface CustomersSink {\n  void save(Customer customer);\n  Stream<Customer> findAll();\n  void deleteById(UUID uuid);\n}\n\n// Persistence-Schicht implementiert es\n@Component\npublic class CustomersSinkJpaImpl\n  implements CustomersSink { ... }",
+      options: [
+        {
+          text: "Es dreht die Compiler-Abhängigkeit um: Die Domain-Schicht definiert, WAS sie braucht (das Interface), ohne von JPA, Datenbank oder Persistence-Details abzuhängen. Die Persistence-Schicht richtet sich nach der Domain.",
+          correct: true,
+          feedback: "Richtig! Das ist das Dependency Inversion Principle (DIP): High-Level-Module (Domain) hängen nicht von Low-Level-Modulen (Persistence) ab, sondern beide von einer Abstraktion. So kann man die Persistence austauschen, ohne die Domain zu ändern."
+        },
+        {
+          text: "Das Interface ist nur ein Java-Stilmittel und hat keine architektonische Bedeutung.",
+          correct: false,
+          feedback: "Das Interface hat zentrale architektonische Bedeutung: Es entkoppelt die Domain-Schicht von der konkreten Persistenz-Technologie."
+        },
+        {
+          text: "Es ist nötig, weil Spring Boot nur Interfaces injizieren kann, keine konkreten Klassen.",
+          correct: false,
+          feedback: "Spring Boot kann auch konkrete Klassen injizieren. Das Interface dient der architektonischen Entkopplung, nicht einer technischen Einschränkung."
+        },
+        {
+          text: "Das Interface existiert nur, damit man Mocks in Tests verwenden kann.",
+          correct: false,
+          feedback: "Testbarkeit ist ein Nebeneffekt, aber der Hauptgrund ist die Umkehr der Abhängigkeitsrichtung: Domain hängt nicht von Persistence ab."
+        }
+      ]
+    },
+    {
+      description: "Im Projekt gibt es drei verschiedene Datentypen für einen Kunden: CustomerDto (Boundary), Customer (Domain), CustomerEntity (Persistence).",
+      question: "Warum hat jede Schicht ein eigenes Modell statt eines gemeinsamen?",
+      options: [
+        {
+          text: "Jede Schicht hat unterschiedliche Anforderungen: Das DTO steuert die JSON-Serialisierung, das Domain-Objekt enthält Geschäftsvalidierung, die Entity bildet das DB-Schema ab. Änderungen in einer Schicht betreffen so nicht die anderen.",
+          correct: true,
+          feedback: "Richtig! Im DTO ist state ein String und uuid ist read-only. Im Domain-Objekt ist state ein Enum mit Validation Groups. In der Entity gibt es JPA-Annotationen und Column-Mappings. Jede Schicht hat eigene Concerns."
+        },
+        {
+          text: "Das ist unnötiger Overhead — ein gemeinsames Modell wäre einfacher und genauso gut.",
+          correct: false,
+          feedback: "Ein gemeinsames Modell würde JPA-Annotationen, JSON-Annotationen und Validierung vermischen. Änderungen am DB-Schema würden die API brechen und umgekehrt."
+        },
+        {
+          text: "Spring Boot erfordert technisch separate Klassen für jede Schicht.",
+          correct: false,
+          feedback: "Spring Boot hat diese Anforderung nicht. Es ist eine bewusste architektonische Entscheidung für lose Kopplung."
+        },
+        {
+          text: "Die verschiedenen Modelle existieren nur, weil MapStruct sonst nicht funktioniert.",
+          correct: false,
+          feedback: "MapStruct ist ein Werkzeug, das die Konvertierung vereinfacht. Die Trennung der Modelle ist eine Design-Entscheidung, die unabhängig vom Mapping-Framework gilt."
+        }
+      ]
+    },
+    {
+      description: "Zwischen den Schichten konvertieren Mapper die Datentypen: CustomerDtoMapper und CustomerEntityMapper.",
+      question: "Wozu dienen die Mapper und warum werden sie mit MapStruct generiert?",
+      code: "@Mapper(componentModel = \"spring\")\npublic interface CustomerDtoMapper {\n  Customer map(CustomerDto dto);\n  CustomerDto map(Customer customer);\n}",
+      options: [
+        {
+          text: "Mapper übersetzen zwischen den schichtspezifischen Modellen. MapStruct generiert den Code zur Compile-Zeit — typsicher, ohne Reflection und als Spring Bean injizierbar.",
+          correct: true,
+          feedback: "Richtig! MapStruct generiert den Mapping-Code als Java-Klasse. Fehler fallen beim Kompilieren auf, nicht erst zur Laufzeit. Mit componentModel = \"spring\" wird der Mapper ein Spring Bean."
+        },
+        {
+          text: "Mapper sind nur nötig, weil Java keine automatische Typkonvertierung hat.",
+          correct: false,
+          feedback: "Auch mit automatischer Konvertierung wäre ein Mapper sinnvoll: Er kapselt die Übersetzungslogik (z.B. String ↔ Enum für den State) an einer Stelle."
+        },
+        {
+          text: "MapStruct ist schneller als Spring Boot's eingebauter Object Mapper.",
+          correct: false,
+          feedback: "Spring Boot hat keinen allgemeinen 'Object Mapper' für Bean-Konvertierung. Jackson ist für JSON, nicht für Schicht-Mapping."
+        },
+        {
+          text: "Mapper werden nur in Tests verwendet, um Testdaten zu erzeugen.",
+          correct: false,
+          feedback: "Mapper werden im Produktionscode eingesetzt — in Controllern und Persistence-Implementierungen."
+        }
+      ]
+    },
+    {
+      description: "Im Projekt werden Tests für Domain-Events mit @RecordApplicationEvents und ApplicationEvents geschrieben.",
+      question: "Wie testet man in Spring Boot, ob ein bestimmtes Application Event publiziert wurde?",
+      code: "@Autowired\nApplicationEvents applicationEvents;\n\n@Test\nvoid shouldPublishEvent() {\n  customersService.createCustomer(customer);\n  assertThat(applicationEvents\n    .stream(CustomerCreatedEvent.class))\n    .hasSize(1);\n}",
+      options: [
+        {
+          text: "Mit @RecordApplicationEvents auf der Testklasse und dem injizierten ApplicationEvents-Objekt, das alle Events des Tests aufzeichnet und per Stream abfragbar macht.",
+          correct: true,
+          feedback: "Richtig! @RecordApplicationEvents aktiviert die Event-Aufzeichnung. ApplicationEvents sammelt alle publizierten Events und bietet eine typsichere Stream-API zum Assertieren."
+        },
+        {
+          text: "Man muss einen eigenen @EventListener als @MockBean registrieren und mit verify() prüfen.",
+          correct: false,
+          feedback: "Das wäre umständlicher. Spring bietet mit @RecordApplicationEvents eine elegantere, eingebaute Lösung."
+        },
+        {
+          text: "Events kann man in Tests nicht prüfen, weil sie asynchron sind.",
+          correct: false,
+          feedback: "Im Testkontext können Events synchron aufgezeichnet werden. @RecordApplicationEvents fängt sie unabhängig von @Async ab."
+        },
+        {
+          text: "Man prüft die Log-Ausgabe des EventListeners, um zu sehen ob das Event ankam.",
+          correct: false,
+          feedback: "Log-Prüfung ist fragil und testet den Listener, nicht das Event. ApplicationEvents testet direkt, ob das Event publiziert wurde."
+        }
+      ]
+    },
+    {
+      description: "Der CustomersSink hat zwei Implementierungen: CustomersSinkJpaImpl (Produktion) und CustomersSinkInMemoryImpl (Tests).",
+      question: "Wie wird gesteuert, welche Implementierung Spring Boot lädt?",
+      code: "@Component\n@ConditionalOnProperty(\n  name = \"application.persistence.type\",\n  havingValue = \"jpa\",\n  matchIfMissing = true\n)\npublic class CustomersSinkJpaImpl\n  implements CustomersSink { ... }\n\n@Bean\n@ConditionalOnMissingBean(CustomersSink.class)\nCustomersSink inMemoryCustomersSink() { ... }",
+      options: [
+        {
+          text: "Über bedingte Bean-Registrierung: @ConditionalOnProperty lädt JPA als Default, @ConditionalOnMissingBean lädt In-Memory nur wenn kein anderer Sink existiert.",
+          correct: true,
+          feedback: "Richtig! matchIfMissing = true macht JPA zum Default. In Domain-Tests, wo JPA nicht geladen wird, greift @ConditionalOnMissingBean und stellt die In-Memory-Variante bereit."
+        },
+        {
+          text: "Man wählt die Implementierung über ein Spring Profile in application.yaml.",
+          correct: false,
+          feedback: "Hier werden @Conditional-Annotationen verwendet, nicht Profile. Das ist flexibler und ermöglicht automatische Fallback-Logik."
+        },
+        {
+          text: "Spring Boot wählt immer die zuerst gefundene Implementierung.",
+          correct: false,
+          feedback: "Ohne Conditional-Annotationen gäbe es einen Fehler wegen mehrdeutiger Beans. Die Conditions steuern gezielt, welche geladen wird."
+        },
+        {
+          text: "Die In-Memory-Variante wird nur geladen, wenn man sie explizit per @Qualifier anfordert.",
+          correct: false,
+          feedback: "@Qualifier löst Mehrdeutigkeiten bei der Injektion. Hier geht es darum, welche Bean überhaupt registriert wird — das steuern die @Conditional-Annotationen."
+        }
+      ]
+    }
+  ];
+
+  let currentQuestion = 0;
+  let score = 0;
+
+  const questionContent = document.getElementById('question-content');
+  const optionsContainer = document.getElementById('options-container');
+  const feedbackEl = document.getElementById('feedback');
+  const nextBtn = document.getElementById('next-btn');
+  const progressBar = document.getElementById('progress-bar');
+  const questionCounter = document.getElementById('question-counter');
+  const scoreCounter = document.getElementById('score-counter');
+
+  function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  function loadQuestion() {
+    const q = questions[currentQuestion];
+    shuffleArray(q.options);
+    feedbackEl.classList.add('hidden');
+    nextBtn.classList.add('hidden');
+
+    progressBar.style.width = `${((currentQuestion) / questions.length) * 100}%`;
+    questionCounter.innerText = `Frage ${currentQuestion + 1} von ${questions.length}`;
+    scoreCounter.innerText = `Punkte: ${score}`;
+
+    let html = `
+                <p class="text-neutral-400 mb-4 italic">"${q.description}"</p>
+                <div class="bg-[#111111] p-4 rounded-xl border-l-4 border-[#ff5401] mb-6">
+                    <p class="text-lg font-medium text-white">${q.question}</p>
+                </div>
+            `;
+
+    if (q.code) {
+      html += `<pre class="code-block p-4 rounded-lg text-sm text-green-400 mb-6 overflow-x-auto shadow-inner">${q.code}</pre>`;
+    }
+
+    questionContent.innerHTML = html;
+    optionsContainer.innerHTML = '';
+
+    q.options.forEach((opt, index) => {
+      const btn = document.createElement('button');
+      btn.className = 'option-btn w-full p-4 rounded-xl text-neutral-200 shadow-sm hover:translate-x-1';
+      btn.innerHTML = `
+                    <div class="flex items-start gap-3">
+                        <span class="flex-none w-6 h-6 rounded-full bg-[#333333] flex items-center justify-center text-xs font-bold">${String.fromCharCode(65 + index)}</span>
+                        <span>${opt.text}</span>
+                    </div>
+                `;
+      btn.onclick = () => handleAnswer(index);
+      optionsContainer.appendChild(btn);
+    });
+  }
+
+  function handleAnswer(index) {
+    const q = questions[currentQuestion];
+    const isCorrect = q.options[index].correct;
+    const buttons = optionsContainer.querySelectorAll('.option-btn');
+
+    buttons.forEach(btn => {
+      btn.disabled = true;
+      btn.classList.remove('hover:translate-x-1');
+    });
+
+    if (isCorrect) {
+      buttons[index].classList.add('correct');
+      score++;
+    } else {
+      buttons[index].classList.add('wrong');
+      const correctIdx = q.options.findIndex(o => o.correct);
+      buttons[correctIdx].classList.add('correct');
+    }
+
+    feedbackEl.innerText = q.options[index].feedback;
+    feedbackEl.className = `mt-6 p-4 rounded-xl border-l-4 ${isCorrect ? 'bg-emerald-900/20 border-emerald-500 text-emerald-300' : 'bg-[#431407]/50 border-[#ff5401] text-orange-300'}`;
+    feedbackEl.classList.remove('hidden');
+    nextBtn.classList.remove('hidden');
+    scoreCounter.innerText = `Punkte: ${score}`;
+  }
+
+  nextBtn.onclick = () => {
+    currentQuestion++;
+    if (currentQuestion < questions.length) {
+      loadQuestion();
+    } else {
+      showResult();
+    }
+  };
+
+  function showResult() {
+    document.getElementById('question-card').classList.add('hidden');
+    document.getElementById('result-screen').classList.remove('hidden');
+    progressBar.style.width = '100%';
+
+    const percentage = (score / questions.length) * 100;
+    let interpretation = "";
+
+    if (percentage === 100) interpretation = "Herausragend! Spring Boot Vertiefung sitzt perfekt.";
+    else if (percentage >= 80) interpretation = "Sehr gut! Du hast die Konzepte solide verinnerlicht.";
+    else if (percentage >= 50) interpretation = "Gute Basis! Die wichtigsten Konzepte sitzen schon.";
+    else interpretation = "Ein guter Start! Schau dir die Erklärungen nochmal in Ruhe an.";
+
+    document.getElementById('final-score').innerText = `${score} von ${questions.length} Punkten (${Math.round(percentage)}%)`;
+    document.getElementById('score-interpretation').innerText = interpretation;
+  }
+
+  shuffleArray(questions);
+  loadQuestion();
+</script>
+</body>
+</html>
