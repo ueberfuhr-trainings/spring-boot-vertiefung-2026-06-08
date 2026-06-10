@@ -14,6 +14,7 @@ import java.lang.annotation.Target;
 @Import({
   LogPerformanceTestService.class,
   LogPerformanceTestAtClassLevelService.class,
+  PublishEventTestService.class
 })
 public @interface AutoConfigureInterceptorTestComponents {
 }
