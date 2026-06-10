@@ -3,6 +3,7 @@ package de.schulung.spring.customers;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.test.context.event.RecordApplicationEvents;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -42,6 +43,7 @@ import java.lang.annotation.Target;
 @TestContextDefinition
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
+@RecordApplicationEvents
 // Standard-Java-Annotations
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
