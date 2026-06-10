@@ -2,6 +2,8 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
+  liquibase:
+    enabled: false
 logging:
   level:
     org:
