@@ -12,7 +12,8 @@ import java.lang.annotation.Target;
 /**
  * Annotation to log the runtime performance of a method.
  * When applied to a method, this annotation allows logging
- * the time taken for the method execution. The logging level
+ * the time taken for the method execution. When applied to
+ * the class, all methods are intercepted. The logging level
  * can be specified using the value property.
  * <p>
  * Logging is performed by intercepting method calls,
@@ -21,7 +22,7 @@ import java.lang.annotation.Target;
  * <p>
  * The default logging level is INFO unless specified otherwise.
  * <p>
- * This annotation is supported by the {@code LogPermancePostProcessor},
+ * This annotation is supported by the {@code LogPermanceInterceptor},
  * which utilizes a method interceptor to calculate and log execution time.
  * <p>
  * Attributes:
@@ -31,7 +32,10 @@ import java.lang.annotation.Target;
  * Apply this annotation to public methods to measure and log their performance.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
+@Target({
+  ElementType.METHOD,
+  ElementType.TYPE
+})
 @Inherited
 @Documented
 public @interface LogPerformance {
