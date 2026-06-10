@@ -22,18 +22,30 @@ public class CustomersService {
   private final CustomersSink sink;
 
   public Stream<Customer> getCustomers() {
+    return getCustomers(CustomerFetchOptions.DEFAULT);
+  }
+
+  public Stream<Customer> getCustomers(CustomerFetchOptions options) {
     return sink
-      .findAll();
+      .findAll(options);
   }
 
   public Stream<Customer> getCustomersByState(CustomerState state) {
+    return getCustomersByState(state, CustomerFetchOptions.DEFAULT);
+  }
+
+  public Stream<Customer> getCustomersByState(CustomerState state, CustomerFetchOptions options) {
     return sink
-      .findByState(state);
+      .findByState(state, options);
   }
 
   public Optional<Customer> getCustomerByUuid(UUID uuid) {
+    return getCustomerByUuid(uuid, CustomerFetchOptions.DEFAULT);
+  }
+
+  public Optional<Customer> getCustomerByUuid(UUID uuid, CustomerFetchOptions options) {
     return sink
-      .findById(uuid);
+      .findById(uuid, options);
   }
 
   @LogPerformance

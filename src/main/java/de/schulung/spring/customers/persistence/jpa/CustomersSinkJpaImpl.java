@@ -1,6 +1,7 @@
 package de.schulung.spring.customers.persistence.jpa;
 
 import de.schulung.spring.customers.domain.Customer;
+import de.schulung.spring.customers.domain.CustomerFetchOptions;
 import de.schulung.spring.customers.domain.CustomerState;
 import de.schulung.spring.customers.domain.CustomersSink;
 import lombok.RequiredArgsConstructor;
@@ -26,25 +27,34 @@ public class CustomersSinkJpaImpl
 
 
   @Override
-  public Stream<Customer> findAll() {
-    return repo
-      .findAll()
+  public Stream<Customer> findAll(CustomerFetchOptions options) {
+    return (
+      options.isIncludeAddress()
+        ? repo.findAllWithAddress()
+        : repo.findAll()
+    )
       .stream()
       .map(mapper::map);
   }
 
   @Override
-  public Stream<Customer> findByState(CustomerState state) {
-    return repo
-      .findCustomerByState(mapper.mapState(state))
+  public Stream<Customer> findByState(CustomerState state, CustomerFetchOptions options) {
+    return (
+      options.isIncludeAddress()
+        ? repo.findCustomerByStateWithAddress(mapper.mapState(state))
+        : repo.findCustomerByState(mapper.mapState(state))
+    )
       .stream()
       .map(mapper::map);
   }
 
   @Override
-  public Optional<Customer> findById(UUID uuid) {
-    return repo
-      .findById(uuid)
+  public Optional<Customer> findById(UUID uuid, CustomerFetchOptions options) {
+    return (
+      options.isIncludeAddress()
+        ? repo.findByIdWithAddress(uuid)
+        : repo.findById(uuid)
+    )
       .map(mapper::map);
   }
 

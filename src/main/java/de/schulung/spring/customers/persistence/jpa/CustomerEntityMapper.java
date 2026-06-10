@@ -3,6 +3,7 @@ package de.schulung.spring.customers.persistence.jpa;
 import de.schulung.spring.customers.domain.Customer;
 import de.schulung.spring.customers.domain.CustomerState;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 @Mapper(
@@ -11,6 +12,10 @@ import org.mapstruct.MappingTarget;
 )
 public interface CustomerEntityMapper {
 
+  @Mapping(
+    target = "address",
+    conditionExpression = "java(org.hibernate.Hibernate.isInitialized(entity.getAddress()))"
+  )
   Customer map(CustomerEntity entity);
 
   default CustomerState mapState(String state) {
@@ -32,6 +37,10 @@ public interface CustomerEntityMapper {
     };
   }
 
+  @Mapping(
+    target = "address",
+    conditionExpression = "java(org.hibernate.Hibernate.isInitialized(entity.getAddress()))"
+  )
   void copy(CustomerEntity entity, @MappingTarget Customer customer);
 
 }
