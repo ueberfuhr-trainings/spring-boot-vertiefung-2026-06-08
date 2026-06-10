@@ -5,6 +5,7 @@ import de.schulung.spring.customers.domain.CustomersService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,7 +23,7 @@ public class AddressController {
   private final CustomersService customersService;
   private final AddressDtoMapper mapper;
 
-  @GetMapping
+  @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   AddressDto getAddress(
     @PathVariable("uuid")
     Customer customer
@@ -33,7 +34,7 @@ public class AddressController {
     return this.mapper.map(customer.getAddress());
   }
 
-  @PutMapping
+  @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
   ResponseEntity<Void> updateAddress(
     @PathVariable("uuid")
     Customer customer,

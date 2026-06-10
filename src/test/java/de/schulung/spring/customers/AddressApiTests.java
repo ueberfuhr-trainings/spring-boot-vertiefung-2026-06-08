@@ -91,11 +91,10 @@ public class AddressApiTests {
       )
       .andExpect(status().isOk())
       .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-      .andExpect(jsonPath("$").isArray())
-      .andExpect(jsonPath("$[0].street").value("Hauptstrasse"))
-      .andExpect(jsonPath("$[0].number").value("1a"))
-      .andExpect(jsonPath("$[0].zip").value("12345"))
-      .andExpect(jsonPath("$[0].city").value("Musterstadt"));
+      .andExpect(jsonPath("$.street").value("Hauptstrasse"))
+      .andExpect(jsonPath("$.number").value("1a"))
+      .andExpect(jsonPath("$.zip").value("12345"))
+      .andExpect(jsonPath("$.city").value("Musterstadt"));
   }
 
   /*
@@ -134,10 +133,10 @@ public class AddressApiTests {
           .accept(MediaType.APPLICATION_JSON)
       )
       .andExpect(status().isOk())
-      .andExpect(jsonPath("$[0].street").value("Bahnhofstrasse"))
-      .andExpect(jsonPath("$[0].number").value("42"))
-      .andExpect(jsonPath("$[0].zip").value("54321"))
-      .andExpect(jsonPath("$[0].city").value("Neustadt"));
+      .andExpect(jsonPath("$.street").value("Bahnhofstrasse"))
+      .andExpect(jsonPath("$.number").value("42"))
+      .andExpect(jsonPath("$.zip").value("54321"))
+      .andExpect(jsonPath("$.city").value("Neustadt"));
   }
 
   /*
@@ -167,9 +166,9 @@ public class AddressApiTests {
           .accept(MediaType.APPLICATION_JSON)
       )
       .andExpect(status().isOk())
-      .andExpect(jsonPath("$[0].street").value("Hauptstrasse"))
-      .andExpect(jsonPath("$[0].zip").value("12345"))
-      .andExpect(jsonPath("$[0].city").value("Musterstadt"));
+      .andExpect(jsonPath("$.street").value("Hauptstrasse"))
+      .andExpect(jsonPath("$.zip").value("12345"))
+      .andExpect(jsonPath("$.city").value("Musterstadt"));
   }
 
   /*
@@ -284,9 +283,9 @@ public class AddressApiTests {
           .accept(MediaType.APPLICATION_JSON)
       )
       .andExpect(status().isOk())
-      .andExpect(jsonPath("$[0].street").value("Hauptstrasse"))
-      .andExpect(jsonPath("$[0].zip").value("12345"))
-      .andExpect(jsonPath("$[0].city").value("Musterstadt"));
+      .andExpect(jsonPath("$.street").value("Hauptstrasse"))
+      .andExpect(jsonPath("$.zip").value("12345"))
+      .andExpect(jsonPath("$.city").value("Musterstadt"));
   }
 
   @ParameterizedTest
