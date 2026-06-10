@@ -1,6 +1,7 @@
 package de.schulung.spring.customers.domain;
 
 import de.schulung.spring.customers.shared.validation.Adult;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
 import lombok.Getter;
@@ -23,6 +24,7 @@ public class Customer {
   private LocalDate birthdate;
   @NotNull
   private CustomerState state = CustomerState.ACTIVE;
-
+  @Valid
+  private Address address;
 
 }
