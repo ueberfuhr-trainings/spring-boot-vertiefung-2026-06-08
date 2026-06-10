@@ -1,9 +1,11 @@
 package de.schulung.spring.customers.domain;
 
+import de.schulung.spring.customers.shared.interceptors.LogPerformance;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.event.Level;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -35,6 +37,7 @@ public class CustomersService {
       .findById(uuid);
   }
 
+  @LogPerformance
   @Validated({CustomerValidationGroups.Create.class, Default.class})
   public void createCustomer(@NotNull @Valid Customer customer) {
     sink.save(customer);
@@ -45,6 +48,7 @@ public class CustomersService {
     return sink.existsById(uuid);
   }
 
+  @LogPerformance(Level.DEBUG)
   @Validated({CustomerValidationGroups.Update.class, Default.class})
   public void replaceCustomer(@NotNull @Valid Customer customer) {
     sink.save(customer);
