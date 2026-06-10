@@ -23,38 +23,30 @@ public class CustomersSinkJpaImpl
   implements CustomersSink {
 
   private final CustomersRepository repo;
+  private final CustomersRepositoryFetch fetch;
   private final CustomerEntityMapper mapper;
 
 
   @Override
   public Stream<Customer> findAll(CustomerFetchOptions options) {
-    return (
-      options.isIncludeAddress()
-        ? repo.findAllWithAddress()
-        : repo.findAll()
-    )
+    return fetch
+      .findAll(options)
       .stream()
       .map(mapper::map);
   }
 
   @Override
   public Stream<Customer> findByState(CustomerState state, CustomerFetchOptions options) {
-    return (
-      options.isIncludeAddress()
-        ? repo.findCustomerByStateWithAddress(mapper.mapState(state))
-        : repo.findCustomerByState(mapper.mapState(state))
-    )
+    return fetch
+      .findByState(mapper.mapState(state), options)
       .stream()
       .map(mapper::map);
   }
 
   @Override
   public Optional<Customer> findById(UUID uuid, CustomerFetchOptions options) {
-    return (
-      options.isIncludeAddress()
-        ? repo.findByIdWithAddress(uuid)
-        : repo.findById(uuid)
-    )
+    return fetch
+      .findById(uuid, options)
       .map(mapper::map);
   }
 
