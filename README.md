@@ -17,4 +17,4 @@ Open http://localhost:8080 in your browser.
 
 ## Reflect Your Learnings
 
-In diesem Repository findest Du auch ein [Quiz mit Wiederholungsfragen](learn/quiz.html).
+In diesem Repository findest Du auch ein [Quiz mit Wiederholungsfragen](learn/quiz.html) ([GitHub Pages](https://ueberfuhr-trainings.github.io/spring-boot-vertiefung-2026-06-08/learn/quiz.html)).
