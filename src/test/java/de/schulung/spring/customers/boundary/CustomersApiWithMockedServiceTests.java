@@ -1,6 +1,7 @@
 package de.schulung.spring.customers.boundary;
 
 import de.schulung.spring.customers.domain.Customer;
+import de.schulung.spring.customers.domain.CustomerFetchOptions;
 import de.schulung.spring.customers.domain.CustomerState;
 import de.schulung.spring.customers.domain.CustomersService;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -41,7 +43,7 @@ public class CustomersApiWithMockedServiceTests {
     customer.setBirthdate(LocalDate.of(2005, 5, 5));
     customer.setState(CustomerState.ACTIVE);
 
-    when(customersService.getCustomerByUuid(uuid))
+    when(customersService.getCustomerByUuid(eq(uuid), any(CustomerFetchOptions.class)))
       .thenReturn(Optional.of(customer));
 
     mockMvc
@@ -61,7 +63,7 @@ public class CustomersApiWithMockedServiceTests {
 
     var uuid = UUID.randomUUID();
 
-    when(customersService.getCustomerByUuid(uuid))
+    when(customersService.getCustomerByUuid(eq(uuid), any(CustomerFetchOptions.class)))
       .thenReturn(Optional.empty());
 
     mockMvc

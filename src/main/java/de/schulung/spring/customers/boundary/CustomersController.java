@@ -1,5 +1,6 @@
 package de.schulung.spring.customers.boundary;
 
+import de.schulung.spring.customers.domain.CustomerFetchOptions;
 import de.schulung.spring.customers.domain.CustomersService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -39,8 +40,8 @@ public class CustomersController {
     return
       (
         stateFilter == null
-          ? customersService.getCustomers()
-          : customersService.getCustomersByState(mapper.mapState(stateFilter))
+          ? customersService.getCustomers(new CustomerFetchOptions().setIncludeAddress(false))
+          : customersService.getCustomersByState(mapper.mapState(stateFilter), new CustomerFetchOptions().setIncludeAddress(false))
       ).map(mapper::map);
 
   }
@@ -51,7 +52,7 @@ public class CustomersController {
   )
   public CustomerDto findCustomerById(@PathVariable UUID uuid) {
     return customersService
-      .getCustomerByUuid(uuid)
+      .getCustomerByUuid(uuid, new CustomerFetchOptions().setIncludeAddress(false))
       .map(mapper::map)
       .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
   }
