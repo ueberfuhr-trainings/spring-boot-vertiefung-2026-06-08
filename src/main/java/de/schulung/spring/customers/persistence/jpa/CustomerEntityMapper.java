@@ -5,7 +5,10 @@ import de.schulung.spring.customers.domain.CustomerState;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 
-@Mapper(componentModel = "spring")
+@Mapper(
+  componentModel = "spring",
+  uses = AddressEntityMapper.class
+)
 public interface CustomerEntityMapper {
 
   Customer map(CustomerEntity entity);

@@ -142,12 +142,14 @@ paths:
               $ref: '#/components/schemas/Address'
         required: true
       responses:
-        '204':
+        '201':
           description: Address was successfully assigned
+        '204':
+          description: Address was successfully replaced
         '400':
           description: Address is invalid
         '404':
-          description: Customer could not be found
+          description: Customer could not be found or does not have any address assigned
   /customers/{id}/payments/paypal:
     parameters:
       - $ref: '#/components/parameters/customerId'
